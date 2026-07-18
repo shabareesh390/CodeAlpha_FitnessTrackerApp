@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class CardWidget extends StatelessWidget {
   final String cardImg;
   const CardWidget({
-    Key key,
-    this.cardImg,
+    Key? key,
+    required this.cardImg,
   }) : super(key: key);
 
   @override

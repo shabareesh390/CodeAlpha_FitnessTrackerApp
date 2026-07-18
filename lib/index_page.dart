@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_daily_fitness_app_ui/common/current_screen_index.dart';
 import 'package:google_fonts/google_fonts.dart';

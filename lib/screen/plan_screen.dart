@@ -7,7 +7,7 @@ import 'package:flutter_daily_fitness_app_ui/common/constants.dart';
 import 'package:flutter_daily_fitness_app_ui/custom_widgets/plan_list_widget.dart';
 
 class PlanScreen extends StatelessWidget {
-  const PlanScreen({Key key}) : super(key: key);
+  const PlanScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

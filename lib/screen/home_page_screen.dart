@@ -1,5 +1,5 @@
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_daily_fitness_app_ui/common/color_constants.dart';
@@ -187,7 +187,7 @@ class HomePageScreen extends StatelessWidget {
 
 class Timeline extends StatelessWidget {
   const Timeline({
-    @required this.children,
+    required this.children,
     this.indicators,
     this.isLeftAligned = true,
     this.itemGap = 12.0,
@@ -214,12 +214,12 @@ class Timeline extends StatelessWidget {
   final List<Widget> children;
   final double itemGap;
   final double gutterSpacing;
-  final List<Widget> indicators;
+  final List<Widget>? indicators;
   final bool isLeftAligned;
   final EdgeInsets padding;
-  final ScrollController controller;
+  final ScrollController? controller;
   final int itemCount;
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
   final bool shrinkWrap;
   final bool primary;
   final bool reverse;
@@ -247,9 +247,9 @@ class Timeline extends StatelessWidget {
       itemBuilder: (context, index) {
         final child = children[index];
 
-        Widget indicator;
+        Widget? indicator;
         if (indicators != null) {
-          indicator = indicators[index];
+          indicator = indicators![index];
         }
 
         final isFirst = index == 0;
@@ -295,18 +295,18 @@ class Timeline extends StatelessWidget {
 
 class _TimelinePainter extends CustomPainter {
   _TimelinePainter({
-    @required this.hideDefaultIndicator,
-    @required this.indicatorColor,
-    @required this.indicatorStyle,
-    @required this.indicatorSize,
-    @required this.lineGap,
-    @required this.strokeCap,
-    @required this.strokeWidth,
-    @required this.style,
-    @required this.lineColor,
-    @required this.isFirst,
-    @required this.isLast,
-    @required this.itemGap,
+    required this.hideDefaultIndicator,
+    required this.indicatorColor,
+    required this.indicatorStyle,
+    required this.indicatorSize,
+    required this.lineGap,
+    required this.strokeCap,
+    required this.strokeWidth,
+    required this.style,
+    required this.lineColor,
+    required this.isFirst,
+    required this.isLast,
+    required this.itemGap,
   })  : linePaint = Paint()
           ..color = lineColor
           ..strokeCap = strokeCap

@@ -4,12 +4,12 @@ class HomeListWidget extends StatelessWidget {
   final String imgpath, title, subtitle, timer;
   final Color color;
   const HomeListWidget({
-    Key key,
-    this.imgpath,
-    this.title,
-    this.subtitle,
-    this.timer,
-    this.color,
+    Key? key,
+    required this.imgpath,
+    required this.title,
+    required this.subtitle,
+    required this.timer,
+    required this.color,
   }) : super(key: key);
 
   @override
