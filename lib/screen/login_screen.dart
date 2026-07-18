@@ -35,14 +35,23 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     
-    final user = await _authService.signInWithGoogle();
-    
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (user == null) {
-        _showError('Failed to sign in with Google. Please try again.');
+    try {
+      final user = await _authService.signInWithGoogle();
+      
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (user == null) {
+          _showError('Failed to sign in with Google. Please try again.');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        _showError('Google Error: $e');
       }
     }
   }

@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: '2724968521-4vrnii1edaq3nnqe1esbnhrjacc3udin.apps.googleusercontent.com',
+  );
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Google Sign In
@@ -40,7 +42,7 @@ class AuthService {
       return userCredential.user;
     } catch (e) {
       print("Error in Google Sign In: $e");
-      return null;
+      rethrow;
     }
   }
 
