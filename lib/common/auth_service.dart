@@ -44,6 +44,47 @@ class AuthService {
     }
   }
 
+  // Email/Password Sign Up
+  Future<User?> signUpWithEmailAndPassword(String email, String password, String name) async {
+    try {
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        // Update display name
+        await userCredential.user!.updateDisplayName(name);
+        // Reload user to ensure displayName is updated
+        await userCredential.user!.reload();
+        final updatedUser = _auth.currentUser!;
+        
+        await _saveUserToFirestore(updatedUser);
+        return updatedUser;
+      }
+    } catch (e) {
+      print("Error in Email Sign Up: $e");
+      // Re-throw to handle it in the UI (e.g., showing a snackbar with the error)
+      rethrow;
+    }
+    return null;
+  }
+
+  // Email/Password Sign In
+  Future<User?> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      return userCredential.user;
+    } catch (e) {
+      print("Error in Email Sign In: $e");
+      rethrow;
+    }
+  }
+
   Future<void> _saveUserToFirestore(User user) async {
     final docRef = _firestore.collection('users').doc(user.uid);
     final doc = await docRef.get();
