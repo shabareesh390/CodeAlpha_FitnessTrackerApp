@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../providers/activity_provider.dart';
 import '../../widgets/custom_chart.dart';
 import '../../widgets/achievement_badge.dart';
 import '../../widgets/glass_card.dart';
@@ -11,6 +13,23 @@ class ProgressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activityProvider = context.watch<ActivityProvider>();
+    final weeklyStats = activityProvider.weeklyStats;
+    
+    // Sort chronologically just in case, or assume they are ordered
+    // Create data arrays, pad with 0 if fewer than 7 days
+    final calorieData = List.generate(7, (i) {
+      if (i < weeklyStats.length) return weeklyStats[i].caloriesBurned.toDouble();
+      return 0.0;
+    });
+    
+    final activeMinutesData = List.generate(7, (i) {
+      if (i < weeklyStats.length) return weeklyStats[i].activeMinutes.toDouble();
+      return 0.0;
+    });
+
+    final xLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
@@ -40,10 +59,10 @@ class ProgressScreen extends StatelessWidget {
                   subtitle: 'Last 7 Days',
                   icon: Icons.local_fire_department,
                   color: AppColors.calories,
-                  chart: const CustomChart(
+                  chart: CustomChart(
                     type: ChartType.bar,
-                    data: [1800, 2100, 1950, 2400, 2200, 1750, 2500],
-                    xLabels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                    data: calorieData,
+                    xLabels: xLabels,
                     color: AppColors.calories,
                     maxY: 3000,
                   ),
@@ -60,10 +79,10 @@ class ProgressScreen extends StatelessWidget {
                   subtitle: 'Last 7 Days',
                   icon: Icons.timer,
                   color: AppColors.activeMinutes,
-                  chart: const CustomChart(
+                  chart: CustomChart(
                     type: ChartType.line,
-                    data: [30, 45, 40, 60, 50, 20, 75],
-                    xLabels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                    data: activeMinutesData,
+                    xLabels: xLabels,
                     color: AppColors.activeMinutes,
                     maxY: 100,
                   ),

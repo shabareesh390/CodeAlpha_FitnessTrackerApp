@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/activity_model.dart';
 import '../models/daily_stats_model.dart';
-import '../services/mock_data_service.dart';
+import '../services/firestore_service.dart';
 import '../core/enums.dart';
 
 /// Manages activity tracking data and chart data.
 class ActivityProvider extends ChangeNotifier {
+  final FirestoreService _firestoreService = FirestoreService();
   List<ActivityModel> _weeklyActivities = [];
   List<DailyStatsModel> _weeklyStats = [];
   List<DailyStatsModel> _monthlyStats = [];
@@ -35,14 +37,23 @@ class ActivityProvider extends ChangeNotifier {
   }
 
   Future<void> loadActivityData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
     _isLoading = true;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 600));
+    try {
+      final now = DateTime.now();
+      final oneWeekAgo = now.subtract(const Duration(days: 7));
+      final oneMonthAgo = now.subtract(const Duration(days: 30));
 
-    _weeklyActivities = MockDataService.generateWeeklyActivities();
-    _weeklyStats = MockDataService.generateWeeklyStats();
-    _monthlyStats = MockDataService.generateMonthlyStats();
+      _weeklyStats = await _firestoreService.getDailyStatsRange(user.uid, oneWeekAgo, now);
+      _monthlyStats = await _firestoreService.getDailyStatsRange(user.uid, oneMonthAgo, now);
+      _weeklyActivities = await _firestoreService.getActivities(user.uid, oneWeekAgo, now);
+    } catch (e) {
+      debugPrint('Error loading activity stats: $e');
+    }
 
     _isLoading = false;
     notifyListeners();

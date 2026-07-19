@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/workout_model.dart';
 import '../services/mock_data_service.dart';
+import '../services/firestore_service.dart';
 import '../core/enums.dart';
 
 /// Manages workout list, categories, favorites, timer state.
 class WorkoutProvider extends ChangeNotifier {
+  final FirestoreService _firestoreService = FirestoreService();
   List<WorkoutModel> _workouts = [];
   WorkoutCategory? _selectedCategory;
   bool _isLoading = true;
@@ -59,11 +62,32 @@ class WorkoutProvider extends ChangeNotifier {
   }
 
   Future<void> loadWorkouts() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
     _isLoading = true;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 600));
-    _workouts = MockDataService.generateWorkouts();
+    try {
+      final fetchedWorkouts = await _firestoreService.getWorkouts(user.uid);
+      if (fetchedWorkouts.isEmpty) {
+        // Seed default workouts if empty
+        final defaults = MockDataService.generateWorkouts();
+        for (final w in defaults) {
+          await _firestoreService.addWorkout(user.uid, w);
+        }
+        _workouts = defaults;
+      } else {
+        _workouts = fetchedWorkouts;
+      }
+    } catch (e) {
+      debugPrint('Error loading workouts: $e');
+    }
+
     _isLoading = false;
     notifyListeners();
   }
@@ -78,12 +102,17 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavorite(String workoutId) {
+  Future<void> toggleFavorite(String workoutId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
     final index = _workouts.indexWhere((w) => w.id == workoutId);
     if (index != -1) {
+      final isFavorite = !_workouts[index].isFavorite;
       _workouts[index] =
-          _workouts[index].copyWith(isFavorite: !_workouts[index].isFavorite);
+          _workouts[index].copyWith(isFavorite: isFavorite);
       notifyListeners();
+      await _firestoreService.toggleWorkoutFavorite(user.uid, workoutId, isFavorite);
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/profile_provider.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/glass_card.dart';
 
@@ -15,18 +15,61 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
+  late TextEditingController _ageController;
+  late TextEditingController _weightController;
+  late TextEditingController _heightController;
+  bool _isLoading = false;
   
   @override
   void initState() {
     super.initState();
-    final user = context.read<AuthProvider>().currentUser;
+    final profileProvider = context.read<ProfileProvider>();
+    final user = profileProvider.user;
+    
     _nameController = TextEditingController(text: user?.displayName ?? '');
+    _ageController = TextEditingController(text: user?.age?.toString() ?? '');
+    _weightController = TextEditingController(text: user?.weight?.toString() ?? '');
+    _heightController = TextEditingController(text: user?.height?.toString() ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _ageController.dispose();
+    _weightController.dispose();
+    _heightController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveProfile() async {
+    setState(() => _isLoading = true);
+    try {
+      final data = {
+        'displayName': _nameController.text.trim(),
+        'age': int.tryParse(_ageController.text.trim()),
+        'weight': double.tryParse(_weightController.text.trim()),
+        'height': double.tryParse(_heightController.text.trim()),
+      };
+      // Remove null values so we don't accidentally overwrite with nulls if empty
+      data.removeWhere((key, value) => value == null && key != 'displayName');
+      
+      await context.read<ProfileProvider>().updateProfile(data);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating profile: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -85,19 +128,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Full Name', style: TextStyle(color: AppColors.textSecondaryDark)),
-                    const SizedBox(height: AppSpacing.sm),
-                    TextField(
-                      controller: _nameController,
-                      style: const TextStyle(color: AppColors.textPrimaryDark),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: AppColors.backgroundDark,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
+                    _buildInputField('Full Name', _nameController, TextInputType.name),
+                    const SizedBox(height: AppSpacing.lg),
+                    _buildInputField('Age', _ageController, TextInputType.number),
+                    const SizedBox(height: AppSpacing.lg),
+                    Row(
+                      children: [
+                        Expanded(child: _buildInputField('Weight (kg)', _weightController, const TextInputType.numberWithOptions(decimal: true))),
+                        const SizedBox(width: AppSpacing.lg),
+                        Expanded(child: _buildInputField('Height (cm)', _heightController, const TextInputType.numberWithOptions(decimal: true))),
+                      ],
                     ),
                   ],
                 ),
@@ -105,18 +145,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: AppSpacing.xxxl),
               GradientButton(
                 text: 'Save Changes',
-                onPressed: () {
-                  // Save logic would go here
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile updated successfully!')),
-                  );
-                  Navigator.pop(context);
-                },
+                isLoading: _isLoading,
+                onPressed: _saveProfile,
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInputField(String label, TextEditingController controller, TextInputType type) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: AppColors.textSecondaryDark)),
+        const SizedBox(height: AppSpacing.sm),
+        TextField(
+          controller: controller,
+          keyboardType: type,
+          style: const TextStyle(color: AppColors.textPrimaryDark),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: AppColors.backgroundDark,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

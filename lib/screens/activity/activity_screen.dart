@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../providers/water_provider.dart';
+import '../../providers/profile_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../../widgets/water_bottle.dart';
 import '../../widgets/glass_card.dart';
 import '../../animations/fade_animation.dart';
@@ -11,8 +13,42 @@ import '../../animations/scale_animation.dart';
 class ActivityScreen extends StatelessWidget {
   const ActivityScreen({Key? key}) : super(key: key);
 
+  void _toggleMeal(BuildContext context, String mealType, int calories) {
+    final dashboardProvider = context.read<DashboardProvider>();
+    final todayStats = dashboardProvider.todayStats;
+    if (todayStats == null) return;
+
+    final isLogged = todayStats.mealsLogged.contains(mealType);
+    final newMeals = List<String>.from(todayStats.mealsLogged);
+    int newCaloriesConsumed = todayStats.caloriesConsumed;
+
+    if (isLogged) {
+      newMeals.remove(mealType);
+      newCaloriesConsumed -= calories;
+    } else {
+      newMeals.add(mealType);
+      newCaloriesConsumed += calories;
+    }
+
+    dashboardProvider.updateTodayStats(todayStats.copyWith(
+      mealsLogged: newMeals,
+      caloriesConsumed: newCaloriesConsumed.clamp(0, 99999),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final calorieGoal = context.watch<ProfileProvider>().user?.calorieGoal ?? 2000;
+    final todayStats = context.watch<DashboardProvider>().todayStats;
+    
+    final _consumedCalories = todayStats?.caloriesConsumed ?? 0;
+    final _breakfastLogged = todayStats?.mealsLogged.contains('Breakfast') ?? false;
+    final _lunchLogged = todayStats?.mealsLogged.contains('Lunch') ?? false;
+    final _dinnerLogged = todayStats?.mealsLogged.contains('Dinner') ?? false;
+
+    final remainingCalories = (calorieGoal - _consumedCalories).clamp(0, calorieGoal);
+    final progress = calorieGoal > 0 ? _consumedCalories / calorieGoal : 0.0;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
@@ -54,7 +90,7 @@ class ActivityScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '1,240',
+                                '$remainingCalories',
                                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
@@ -62,16 +98,25 @@ class ActivityScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          Icon(Icons.pie_chart, color: AppColors.primary, size: 32),
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: CircularProgressIndicator(
+                              value: progress.clamp(0.0, 1.0),
+                              backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+                              color: AppColors.primary,
+                              strokeWidth: 6,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: AppSpacing.xxxl),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildMacroTracker('Carbs', 0.6, AppColors.secondary, '120/200g'),
-                          _buildMacroTracker('Protein', 0.8, AppColors.calories, '110/140g'),
-                          _buildMacroTracker('Fat', 0.4, AppColors.warning, '30/70g'),
+                          _buildMacroTracker('Carbs', progress * 0.9, AppColors.secondary, '${(_consumedCalories * 0.4 / 4).toInt()}/${(calorieGoal * 0.4 / 4).toInt()}g'),
+                          _buildMacroTracker('Protein', progress * 1.1, AppColors.calories, '${(_consumedCalories * 0.3 / 4).toInt()}/${(calorieGoal * 0.3 / 4).toInt()}g'),
+                          _buildMacroTracker('Fat', progress * 0.8, AppColors.warning, '${(_consumedCalories * 0.3 / 9).toInt()}/${(calorieGoal * 0.3 / 9).toInt()}g'),
                         ],
                       ),
                     ],
@@ -80,7 +125,7 @@ class ActivityScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xxxl),
 
-              // Meal Logging (Placeholders)
+              // Meal Logging
               FadeAnimation(
                 delay: const Duration(milliseconds: 200),
                 child: Text(
@@ -94,17 +139,26 @@ class ActivityScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               FadeAnimation(
                 delay: const Duration(milliseconds: 250),
-                child: _buildMealCard(context, 'Breakfast', '450 kcal', Icons.breakfast_dining),
+                child: GestureDetector(
+                  onTap: () => _toggleMeal(context, 'Breakfast', 450),
+                  child: _buildMealCard(context, 'Breakfast', '450 kcal', Icons.breakfast_dining, isLogged: _breakfastLogged),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               FadeAnimation(
                 delay: const Duration(milliseconds: 300),
-                child: _buildMealCard(context, 'Lunch', 'Recommend 600-800 kcal', Icons.lunch_dining, isLogged: false),
+                child: GestureDetector(
+                  onTap: () => _toggleMeal(context, 'Lunch', 650),
+                  child: _buildMealCard(context, 'Lunch', '650 kcal', Icons.lunch_dining, isLogged: _lunchLogged),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               FadeAnimation(
                 delay: const Duration(milliseconds: 350),
-                child: _buildMealCard(context, 'Dinner', 'Recommend 500-700 kcal', Icons.dinner_dining, isLogged: false),
+                child: GestureDetector(
+                  onTap: () => _toggleMeal(context, 'Dinner', 550),
+                  child: _buildMealCard(context, 'Dinner', '550 kcal', Icons.dinner_dining, isLogged: _dinnerLogged),
+                ),
               ),
               const SizedBox(height: AppSpacing.xxxl),
 
@@ -140,13 +194,13 @@ class ActivityScreen extends StatelessWidget {
                           Column(
                             children: [
                               WaterBottle(
-                                progress: waterProvider.progress,
+                                progress: (waterProvider.totalMl / (context.watch<ProfileProvider>().user?.waterGoal ?? 2500)).clamp(0.0, 1.0),
                                 width: 100,
                                 height: 180,
                               ),
                               const SizedBox(height: AppSpacing.lg),
                               Text(
-                                '${waterProvider.totalMl} / ${waterProvider.goalMl} ml',
+                                '${waterProvider.totalMl} / ${context.watch<ProfileProvider>().user?.waterGoal ?? 2500} ml',
                                 style: const TextStyle(
                                   color: AppColors.textPrimaryDark,
                                   fontWeight: FontWeight.bold,

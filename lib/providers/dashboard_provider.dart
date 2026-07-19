@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/daily_stats_model.dart';
-import '../services/mock_data_service.dart';
+import '../services/firestore_service.dart';
 import '../core/constants.dart';
 
 /// Dashboard state: today's stats, greeting, motivational quote.
 class DashboardProvider extends ChangeNotifier {
+  final FirestoreService _firestoreService = FirestoreService();
   DailyStatsModel? _todayStats;
   bool _isLoading = true;
   String _greeting = '';
@@ -30,18 +32,40 @@ class DashboardProvider extends ChangeNotifier {
         Random().nextInt(AppConstants.motivationalQuotes.length)];
   }
 
-  /// Load today's stats (from Firestore or mock data).
+  /// Load today's stats from Firestore.
   Future<void> loadTodayStats() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
     _isLoading = true;
     notifyListeners();
 
-    // Simulate network delay for smooth animation
-    await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      final stats = await _firestoreService.getDailyStats(user.uid, DateTime.now());
+      if (stats != null) {
+        _todayStats = stats;
+      } else {
+        // Create an empty stats record for today
+        _todayStats = DailyStatsModel(
+          id: 'stats_${DateTime.now().millisecondsSinceEpoch}',
+          date: DateTime.now(),
+        );
+        await _firestoreService.saveDailyStats(user.uid, _todayStats!);
+      }
+    } catch (e) {
+      debugPrint('Error loading dashboard stats: $e');
+    }
 
-    // Use mock data for now
-    _todayStats = MockDataService.generateTodayStats();
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> updateTodayStats(DailyStatsModel stats) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    _todayStats = stats;
+    notifyListeners();
+    await _firestoreService.saveDailyStats(user.uid, stats);
   }
 
   /// Refresh dashboard data.

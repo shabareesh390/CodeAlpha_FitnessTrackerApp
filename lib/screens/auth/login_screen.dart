@@ -52,16 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   // ─── Logo ───
                   FadeAnimation(
                     child: Container(
-                      width: 80,
-                      height: 80,
+                      width: 90,
+                      height: 90,
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.4),
-                            blurRadius: 24,
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),
                         ],

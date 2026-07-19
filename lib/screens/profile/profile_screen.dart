@@ -4,19 +4,20 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/profile_provider.dart';
 import '../../widgets/glass_card.dart';
 import '../../animations/fade_animation.dart';
 import '../chat/ai_coach_screen.dart';
 import 'edit_profile_screen.dart';
+import 'goals_screen.dart';
+import 'notifications_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
     final authProvider = context.watch<AuthProvider>();
-    final isDark = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
@@ -111,11 +112,11 @@ class ProfileScreen extends StatelessWidget {
                 delay: const Duration(milliseconds: 150),
                 child: Row(
                   children: [
-                    Expanded(child: _buildStatCard('Weight', '75 kg')),
+                    Expanded(child: _buildStatCard('Weight', context.watch<ProfileProvider>().user?.weight != null ? '${context.watch<ProfileProvider>().user!.weight} kg' : '--')),
                     const SizedBox(width: AppSpacing.md),
-                    Expanded(child: _buildStatCard('Height', '180 cm')),
+                    Expanded(child: _buildStatCard('Height', context.watch<ProfileProvider>().user?.height != null ? '${context.watch<ProfileProvider>().user!.height} cm' : '--')),
                     const SizedBox(width: AppSpacing.md),
-                    Expanded(child: _buildStatCard('Age', '28')),
+                    Expanded(child: _buildStatCard('Age', context.watch<ProfileProvider>().user?.age != null ? '${context.watch<ProfileProvider>().user!.age}' : '--')),
                   ],
                 ),
               ),
@@ -209,13 +210,23 @@ class ProfileScreen extends StatelessWidget {
                       _buildSettingTile(
                         icon: Icons.track_changes,
                         title: 'Goals',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const GoalsScreen()),
+                          );
+                        },
                       ),
                       _buildDivider(),
                       _buildSettingTile(
                         icon: Icons.notifications_outlined,
                         title: 'Notifications',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                          );
+                        },
                       ),
                     ],
                   ),

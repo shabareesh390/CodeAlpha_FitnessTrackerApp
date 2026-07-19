@@ -2,7 +2,8 @@
     package="com.example.flutter_daily_fitness_app_ui">
    <application
         android:label="flutter_daily_fitness_app_ui"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -8,6 +8,8 @@ import '../../widgets/glass_card.dart';
 import '../../animations/fade_animation.dart';
 import '../../animations/scale_animation.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/profile_provider.dart';
+import '../../providers/dashboard_provider.dart';
 
 class HomeDashboard extends StatelessWidget {
   const HomeDashboard({Key? key}) : super(key: key);
@@ -66,7 +68,9 @@ class HomeDashboard extends StatelessWidget {
                 child: Center(
                   child: ScaleAnimation(
                     child: ProgressRing(
-                      progress: 0.75, // 75% completed
+                      progress: (context.watch<ProfileProvider>().user?.calorieGoal ?? 2000) > 0 
+                                ? (context.watch<DashboardProvider>().todayStats?.caloriesBurned ?? 0) / (context.watch<ProfileProvider>().user?.calorieGoal ?? 2000)
+                                : 0.0,
                       size: 220,
                       strokeWidth: 16,
                       progressColor: AppColors.primary,
@@ -81,7 +85,7 @@ class HomeDashboard extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '1,850',
+                            '${context.watch<DashboardProvider>().todayStats?.caloriesBurned ?? 0}',
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.textPrimaryDark,
@@ -89,7 +93,7 @@ class HomeDashboard extends StatelessWidget {
                                 ),
                           ),
                           Text(
-                            '/ 2,500 kcal',
+                            '/ ${context.watch<ProfileProvider>().user?.calorieGoal ?? 2000} kcal',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: AppColors.textTertiaryDark,
                                 ),
@@ -166,29 +170,29 @@ class HomeDashboard extends StatelessWidget {
                   crossAxisSpacing: AppSpacing.lg,
                   mainAxisSpacing: AppSpacing.lg,
                   childAspectRatio: 0.9,
-                  children: const [
+                  children: [
                     MetricCard(
                       icon: Icons.directions_walk_rounded,
-                      value: '8,432',
+                      value: '${context.watch<DashboardProvider>().todayStats?.steps ?? 0}',
                       label: 'Steps',
                       color: AppColors.steps,
                       trend: '+12%',
                     ),
                     MetricCard(
                       icon: Icons.timer_rounded,
-                      value: '45m',
+                      value: '${context.watch<DashboardProvider>().todayStats?.activeMinutes ?? 0}m',
                       label: 'Active Time',
                       color: AppColors.activeMinutes,
                     ),
                     MetricCard(
                       icon: Icons.favorite_rounded,
-                      value: '112',
+                      value: '${context.watch<DashboardProvider>().todayStats?.heartRate ?? 72}',
                       label: 'Avg HR (bpm)',
                       color: AppColors.heartRate,
                     ),
                     MetricCard(
                       icon: Icons.nightlight_round,
-                      value: '7h 20m',
+                      value: '${(context.watch<DashboardProvider>().todayStats?.sleepDuration ?? 0).toStringAsFixed(1)}h',
                       label: 'Sleep',
                       color: AppColors.sleep,
                       trend: '+5%',

@@ -1,23 +1,27 @@
-# Daily Fitness Tracker App
+# FittPulse - Premium Fitness Tracker
 
-A beautifully designed, cross-platform fitness tracking application built with Flutter and Firebase. 
+A beautifully designed, premium cross-platform fitness tracking application built with Flutter, Firebase, and Gemini AI. FittPulse features a stunning dark-mode-first glassmorphism UI designed for a modern user experience.
 
-## Features
+## ✨ Features
 
-*   **Authentication**: Secure Google Sign-In and Email/Password login powered by Firebase Authentication.
-*   **Activity Tracking**: Visualize your workout progress, calories burned, and active minutes.
-*   **Interactive Charts**: Beautiful, responsive charts built using the `fl_chart` package.
-*   **Smart Filtering**: Chip-based UI to easily filter workouts by type (Cardio, Strength, Yoga, etc.) and difficulty level.
+*   **Premium UI/UX**: Sleek dark theme with glassmorphic cards, smooth page transitions, micro-animations, and dynamic progress rings.
+*   **Gemini AI Coach**: Get personalized workout plans, diet advice, and fitness tips from the built-in generative AI coach.
+*   **Complete Firebase Integration**: 
+    *   **Authentication**: Secure Google Sign-In and Email/Password login.
+    *   **Cloud Firestore**: Real-time synchronization of your daily stats, hydration goals, calorie tracking, and favorite workouts.
+*   **Activity Tracking**: Visualize your workout progress, calories burned, active minutes, and heart rate with interactive `fl_chart` graphs.
+*   **Meal & Water Logging**: Easily track your breakfast, lunch, dinner, and daily hydration goals. 
+*   **Smart Filtering**: Chip-based UI to easily filter workouts by type (Cardio, Strength, Yoga, etc.).
 *   **Cross-Platform**: Fully functional on Android, iOS, and Web.
-*   **Modern UI**: Sleek dark/light theme accents, smooth animations, and a highly polished user experience.
 
-## Tech Stack
+## 🛠 Tech Stack
 
-*   **Frontend**: Flutter (Dart)
+*   **Frontend**: Flutter (Dart), Provider (State Management)
 *   **Backend**: Firebase Authentication & Cloud Firestore
-*   **Dependencies**: `firebase_core`, `firebase_auth`, `cloud_firestore`, `google_sign_in`, `fl_chart`, `google_fonts`
+*   **AI Engine**: Google Gemini API (`google_generative_ai`)
+*   **Key Packages**: `fl_chart`, `flutter_dotenv`, `google_fonts`, `firebase_core`
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 *   Flutter SDK (v3.0.0 or higher)
@@ -36,14 +40,19 @@ A beautifully designed, cross-platform fitness tracking application built with F
     flutter pub get
     ```
 
-3.  **Firebase Configuration (Optional but Recommended):**
-    If you are running your own backend, make sure to generate your `firebase_options.dart` file using the FlutterFire CLI:
+3.  **Environment Variables (`.env`):**
+    Create a `.env` file in the root directory and add your Gemini API key:
+    ```env
+    GEMINI_API_KEY=your_gemini_api_key_here
+    ```
+
+4.  **Firebase Configuration:**
+    Ensure you have generated your `firebase_options.dart` file using the FlutterFire CLI if you are connecting to your own backend:
     ```bash
     flutterfire configure
     ```
-    *Note: If testing Google Sign-in on Web, ensure you launch with a fixed port that is authorized in your Google Cloud Console (e.g., `flutter run -d chrome --web-port 5000`).*
 
-4.  **Run the app:**
+5.  **Run the app:**
     ```bash
     flutter run
     ```
