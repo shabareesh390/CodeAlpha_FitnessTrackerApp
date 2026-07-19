@@ -32,7 +32,7 @@ class _AICoachScreenState extends State<AICoachScreen> {
     // Initialize Gemini model
     final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
     _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       apiKey: apiKey,
       systemInstruction: Content.system(
           'You are an expert premium fitness coach and nutritionist. Keep your answers concise, encouraging, and highly motivating. Use emojis.'),
@@ -62,11 +62,8 @@ class _AICoachScreenState extends State<AICoachScreen> {
       }
     } catch (e) {
       setState(() {
-        _messages.add({
-          'role': 'ai',
-          'text':
-              'Oops! I encountered an error: $e'
-        });
+        _messages
+            .add({'role': 'ai', 'text': 'Oops! I encountered an error: $e'});
       });
     } finally {
       setState(() {
