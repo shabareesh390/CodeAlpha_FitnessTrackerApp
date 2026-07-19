@@ -35,9 +35,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-            child: Column(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 450),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
@@ -172,6 +175,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const Spacer(),
                 ],
               ],
+            ),
+          ),
             ),
           ),
         ),

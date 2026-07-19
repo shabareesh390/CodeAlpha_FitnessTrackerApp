@@ -39,13 +39,20 @@ class _IndexScreenState extends State<IndexScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: FloatingBottomNav(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
+            child: SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: FloatingBottomNav(
+                    currentIndex: _currentIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
+                ),
+              ),
             ),
           ),
         ],

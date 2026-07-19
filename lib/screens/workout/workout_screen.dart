@@ -24,9 +24,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             // Header
             FadeAnimation(
               child: Padding(
@@ -124,7 +127,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           },
                         ),
             ),
-          ],
+            ],
+          ),
+        ),
         ),
       ),
     );

@@ -33,10 +33,13 @@ class ProgressScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               FadeAnimation(
@@ -127,6 +130,8 @@ class ProgressScreen extends StatelessWidget {
               
               const SizedBox(height: 100), // padding for bottom nav
             ],
+          ),
+        ),
           ),
         ),
       ),

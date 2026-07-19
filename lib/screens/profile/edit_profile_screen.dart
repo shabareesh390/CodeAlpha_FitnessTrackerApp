@@ -110,7 +110,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       border: Border.all(color: AppColors.primary, width: 2),
                       color: AppColors.cardDark,
                     ),
-                    child: const Icon(Icons.person, size: 50, color: AppColors.textSecondaryDark),
+                    child: ClipOval(
+                      child: context.watch<ProfileProvider>().user?.photoURL != null
+                          ? Image.network(
+                              context.watch<ProfileProvider>().user!.photoURL!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Center(
+                                child: Text(
+                                  context.read<ProfileProvider>().initials,
+                                  style: const TextStyle(
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Text(
+                                context.read<ProfileProvider>().initials,
+                                style: const TextStyle(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(8),

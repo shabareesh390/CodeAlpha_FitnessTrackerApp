@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import '../../providers/profile_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
@@ -284,36 +286,90 @@ class _AICoachScreenState extends State<AICoachScreen> {
   }
 
   Widget _buildChatBubble(String text, bool isUser) {
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.md),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          color: isUser ? AppColors.primary : AppColors.cardDark,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg).copyWith(
-            bottomRight: isUser
-                ? const Radius.circular(0)
-                : const Radius.circular(AppSpacing.radiusLg),
-            bottomLeft: !isUser
-                ? const Radius.circular(0)
-                : const Radius.circular(AppSpacing.radiusLg),
+    final profileProvider = context.read<ProfileProvider>();
+    final userPhoto = profileProvider.user?.photoURL;
+    final initials = profileProvider.initials;
+
+    final avatar = isUser
+        ? Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.primary, width: 1),
+              color: AppColors.cardDark,
+            ),
+            child: ClipOval(
+              child: userPhoto != null
+                  ? Image.network(
+                      userPhoto,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Text(
+                          initials,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary),
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        initials,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary),
+                      ),
+                    ),
+            ),
+          )
+        : Container(
+            width: 32,
+            height: 32,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: AppColors.accentGradient,
+            ),
+            child: const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+          );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: Row(
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isUser) ...[
+            avatar,
+            const SizedBox(width: AppSpacing.sm),
+          ],
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.70,
+              ),
+              decoration: BoxDecoration(
+                color: isUser ? AppColors.primary : AppColors.cardDark,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg).copyWith(
+                  bottomRight: isUser ? const Radius.circular(0) : const Radius.circular(AppSpacing.radiusLg),
+                  bottomLeft: !isUser ? const Radius.circular(0) : const Radius.circular(AppSpacing.radiusLg),
+                ),
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: isUser ? Colors.white : AppColors.textPrimaryDark,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isUser ? Colors.white : AppColors.textPrimaryDark,
-            fontSize: 14,
-            height: 1.4,
-          ),
-        ),
+          if (isUser) ...[
+            const SizedBox(width: AppSpacing.sm),
+            avatar,
+          ],
+        ],
       ),
     );
   }

@@ -1,6 +1,6 @@
 {
-    "name": "flutter_daily_fitness_app_ui",
-    "short_name": "flutter_daily_fitness_app_ui",
+    "name": "FittPulse",
+    "short_name": "FittPulse",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

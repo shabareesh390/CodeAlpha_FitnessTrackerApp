@@ -12,6 +12,10 @@ class ProfileProvider extends ChangeNotifier {
   UserModel? get user => _user;
   bool get isLoading => _isLoading;
 
+  ProfileProvider() {
+    loadProfile();
+  }
+
   /// Load user profile from Firestore.
   Future<void> loadProfile() async {
     final firebaseUser = FirebaseAuth.instance.currentUser;

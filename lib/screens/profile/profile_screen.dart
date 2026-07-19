@@ -21,9 +21,12 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
@@ -51,16 +54,35 @@ class ProfileScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: AppColors.primary, width: 2),
-                          image: authProvider.currentUser?.photoURL != null
-                              ? DecorationImage(
-                                  image: NetworkImage(authProvider.currentUser!.photoURL!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                          color: AppColors.cardDark,
                         ),
-                        child: authProvider.currentUser?.photoURL == null
-                            ? const Icon(Icons.person, color: AppColors.textSecondaryDark, size: 40)
-                            : null,
+                        child: ClipOval(
+                          child: authProvider.currentUser?.photoURL != null
+                              ? Image.network(
+                                  authProvider.currentUser!.photoURL!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => Center(
+                                    child: Text(
+                                      context.read<ProfileProvider>().initials,
+                                      style: const TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    context.read<ProfileProvider>().initials,
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                        ),
                       ),
                       const SizedBox(width: AppSpacing.xl),
                       Expanded(
@@ -255,6 +277,8 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 100), // padding for bottom nav
             ],
+          ),
+        ),
           ),
         ),
       ),
