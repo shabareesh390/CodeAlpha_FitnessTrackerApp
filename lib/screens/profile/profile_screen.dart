@@ -50,11 +50,16 @@ class ProfileScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: AppColors.primary, width: 2),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/google.png'), // Placeholder
-                            fit: BoxFit.cover,
-                          ),
+                          image: authProvider.currentUser?.photoURL != null
+                              ? DecorationImage(
+                                  image: NetworkImage(authProvider.currentUser!.photoURL!),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                         ),
+                        child: authProvider.currentUser?.photoURL == null
+                            ? const Icon(Icons.person, color: AppColors.textSecondaryDark, size: 40)
+                            : null,
                       ),
                       const SizedBox(width: AppSpacing.xl),
                       Expanded(
@@ -62,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'John Doe',
+                              authProvider.currentUser?.displayName ?? 'User',
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.textPrimaryDark,
@@ -70,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'john.doe@example.com',
+                              authProvider.currentUser?.email ?? 'No email provided',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: AppColors.textSecondaryDark,
                                   ),
@@ -83,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
                               ),
                               child: const Text(
-                                'Pro Member',
+                                'Member',
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 10,

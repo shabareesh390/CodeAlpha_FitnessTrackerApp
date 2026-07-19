@@ -3,7 +3,7 @@ class AppConstants {
   AppConstants._();
 
   // ─── App Info ───
-  static const String appName = 'FitPulse';
+  static const String appName = 'FittPulse';
   static const String appTagline = 'Your Premium Fitness Companion';
   static const String appVersion = '1.0.0';
 

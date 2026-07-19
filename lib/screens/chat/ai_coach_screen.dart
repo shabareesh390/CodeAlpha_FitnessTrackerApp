@@ -65,7 +65,7 @@ class _AICoachScreenState extends State<AICoachScreen> {
         _messages.add({
           'role': 'ai',
           'text':
-              'Oops! I encountered an error connecting to my servers. Please check your connection and try again.'
+              'Oops! I encountered an error: $e'
         });
       });
     } finally {

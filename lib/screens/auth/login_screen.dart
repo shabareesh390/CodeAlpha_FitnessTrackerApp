@@ -54,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       width: 80,
                       height: 80,
+                      clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                         gradient: AppColors.primaryGradient,
                         borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
@@ -65,10 +66,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.fitness_center_rounded,
-                        color: Colors.white,
-                        size: 40,
+                      child: Image.asset(
+                        'assets/icons/app_icon.jpg',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   FadeAnimation(
                     delay: const Duration(milliseconds: 100),
                     child: Text(
-                      'FitPulse',
+                      'FittPulse',
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
                             fontWeight: FontWeight.w800,
                             letterSpacing: -1,

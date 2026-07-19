@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/metric_card.dart';
@@ -6,12 +7,16 @@ import '../../widgets/progress_ring.dart';
 import '../../widgets/glass_card.dart';
 import '../../animations/fade_animation.dart';
 import '../../animations/scale_animation.dart';
+import '../../providers/auth_provider.dart';
 
 class HomeDashboard extends StatelessWidget {
   const HomeDashboard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().currentUser;
+    final photoUrl = user?.photoURL;
+    
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
@@ -44,10 +49,11 @@ class HomeDashboard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 24,
-                      backgroundImage: AssetImage('assets/images/google.png'), // Placeholder
                       backgroundColor: AppColors.surfaceDark,
+                      backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                      child: photoUrl == null ? const Icon(Icons.person, color: AppColors.textSecondaryDark) : null,
                     ),
                   ],
                 ),
@@ -159,7 +165,7 @@ class HomeDashboard extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: AppSpacing.lg,
                   mainAxisSpacing: AppSpacing.lg,
-                  childAspectRatio: 1.4,
+                  childAspectRatio: 1.1,
                   children: const [
                     MetricCard(
                       icon: Icons.directions_walk_rounded,
