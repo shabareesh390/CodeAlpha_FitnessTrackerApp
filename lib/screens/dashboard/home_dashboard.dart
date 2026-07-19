@@ -165,7 +165,7 @@ class HomeDashboard extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: AppSpacing.lg,
                   mainAxisSpacing: AppSpacing.lg,
-                  childAspectRatio: 1.1,
+                  childAspectRatio: 0.9,
                   children: const [
                     MetricCard(
                       icon: Icons.directions_walk_rounded,

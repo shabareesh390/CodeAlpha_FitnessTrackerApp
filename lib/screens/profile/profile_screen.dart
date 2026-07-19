@@ -7,6 +7,7 @@ import '../../providers/theme_provider.dart';
 import '../../widgets/glass_card.dart';
 import '../../animations/fade_animation.dart';
 import '../chat/ai_coach_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -197,7 +198,12 @@ class ProfileScreen extends StatelessWidget {
                       _buildSettingTile(
                         icon: Icons.person_outline,
                         title: 'Edit Profile',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                          );
+                        },
                       ),
                       _buildDivider(),
                       _buildSettingTile(
@@ -210,19 +216,6 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.notifications_outlined,
                         title: 'Notifications',
                         onTap: () {},
-                      ),
-                      _buildDivider(),
-                      ListTile(
-                        leading: const Icon(Icons.dark_mode_outlined, color: AppColors.textPrimaryDark),
-                        title: const Text(
-                          'Dark Mode',
-                          style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w500),
-                        ),
-                        trailing: Switch(
-                          value: isDark,
-                          onChanged: (value) => themeProvider.toggleTheme(),
-                          activeThumbColor: AppColors.primary,
-                        ),
                       ),
                     ],
                   ),
@@ -285,14 +278,17 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSettingTile({required IconData icon, required String title, required VoidCallback onTap}) {
-    return ListTile(
-      leading: Icon(icon, color: AppColors.textPrimaryDark),
-      title: Text(
-        title,
-        style: const TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w500),
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: Icon(icon, color: AppColors.textPrimaryDark),
+        title: Text(
+          title,
+          style: const TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w500),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, color: AppColors.textTertiaryDark, size: 16),
+        onTap: onTap,
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, color: AppColors.textTertiaryDark, size: 16),
-      onTap: onTap,
     );
   }
 
