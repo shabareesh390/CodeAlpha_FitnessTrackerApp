@@ -37,7 +37,7 @@ class _AICoachScreenState extends State<AICoachScreen> {
       model: 'gemini-2.5-flash',
       apiKey: apiKey,
       systemInstruction: Content.system(
-          'You are an expert premium fitness coach and nutritionist. Keep your answers concise, encouraging, and highly motivating. Use emojis.'),
+          'You are an expert premium fitness coach and nutritionist. Keep your answers concise, encouraging, and highly motivating. Use emojis. IMPORTANT: You must ONLY answer questions related to fitness, workouts, nutrition, health, and wellness. If the user asks about ANY other topic (like programming, coding, general knowledge, etc.), politely decline and remind them that you are exclusively a fitness coach.'),
     );
     _chatSession = _model.startChat();
   }
