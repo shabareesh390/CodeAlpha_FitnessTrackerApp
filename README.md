@@ -1,6 +1,6 @@
 # FittPulse - Premium Fitness Tracker
 
-A beautifully designed, premium cross-platform fitness tracking application built with Flutter, Firebase, and Gemini AI. FittPulse features a stunning dark-mode-first glassmorphism UI designed for a modern user experience.
+A beautifully designed, premium cross-platform fitness tracking application built with Flutter, Firebase, and Gemini API. FittPulse features a stunning dark-mode-first glassmorphism UI designed for a modern user experience.
 
 ## ✨ Features
 
